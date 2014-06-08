@@ -5,14 +5,62 @@
 var models = angular.module('weechatModels', []);
 
 models.service('models', ['$rootScope', '$filter', function($rootScope, $filter) {
+    $rootScope.parseRichText = function(text) {
+        var textElements = weeChat.Protocol.rawText2Rich(text);
+        var typeToClassPrefixFg = {
+            'option': 'cof-',
+            'weechat': 'cwf-',
+            'ext': 'cef-'
+        };
+        var typeToClassPrefixBg = {
+            'option': 'cob-',
+            'weechat': 'cwb-',
+            'ext': 'ceb-'
+        };
+        textElements.forEach(function(textEl) {
+            textEl.classes = [];
+
+            // foreground color
+            var prefix = typeToClassPrefixFg[textEl.fgColor.type];
+            textEl.classes.push(prefix + textEl.fgColor.name);
+
+            // background color
+            prefix = typeToClassPrefixBg[textEl.bgColor.type];
+            textEl.classes.push(prefix + textEl.bgColor.name);
+
+            // attributes
+            if (textEl.attrs.name !== null) {
+                textEl.classes.push('coa-' + textEl.attrs.name);
+            }
+            for (var attr in textEl.attrs.override) {
+                val = textEl.attrs.override[attr];
+                if (val) {
+                    textEl.classes.push('a-' + attr);
+                } else {
+                    textEl.classes.push('a-no-' + attr);
+                }
+            }
+        });
+        return textElements;
+    };
+
     /*
      * Buffer class
      */
     this.Buffer = function(message) {
+
+        function string2Bin(str) {
+          var result = [];
+          for (var i = 0; i < str.length; i++) {
+            result.push(str.charCodeAt(i));
+          }
+          return result;
+        }
         // weechat properties
         var fullName = message.full_name;
         var shortName = message.short_name;
-        var title = message.title;
+        var title = $rootScope.parseRichText(message.title);
+        console.log(message.title,string2Bin(message.title), weeChat.Protocol.rawText2Rich(message.title), title);
         var number = message.number;
         var pointer = message.pointers[0];
         var notify = 3; // Default 3 == message
@@ -287,14 +335,11 @@ models.service('models', ['$rootScope', '$filter', function($rootScope, $filter)
         }
 
 
-        var prefix = weeChat.Protocol.rawText2Rich(message.prefix);
-        addClasses(prefix);
-
+        var prefix = $rootScope.parseRichText(message.prefix);
         var tags_array = message.tags_array;
         var displayed = message.displayed;
         var highlight = message.highlight;
-        var content = weeChat.Protocol.rawText2Rich(message.message);
-        addClasses(content);
+        var content = $rootScope.parseRichText(message.message);
 
         if (highlight) {
             prefix.forEach(function(textEl) {

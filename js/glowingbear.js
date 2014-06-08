@@ -97,7 +97,7 @@ weechat.factory('handlers', ['$rootScope', '$log', 'models', 'plugins', function
         var buffer = obj.pointers[0];
         var old = models.getBuffer(buffer);
         old.fullName = obj.full_name;
-        old.title = obj.title;
+        old.title = $rootScope.parseRichText(obj.title);
         old.number = obj.number;
     };
 
