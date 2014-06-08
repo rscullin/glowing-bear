@@ -48,7 +48,7 @@ models.service('models', ['$rootScope', '$filter', function($rootScope, $filter)
      * Buffer class
      */
     this.Buffer = function(message) {
-
+        // debug
         function string2Bin(str) {
           var result = [];
           for (var i = 0; i < str.length; i++) {
@@ -296,44 +296,6 @@ models.service('models', ['$rootScope', '$filter', function($rootScope, $filter)
         var buffer = message.buffer;
         var date = message.date;
         var shortTime = $filter('date')(date, 'HH:mm');
-
-        function addClasses(textElements) {
-            var typeToClassPrefixFg = {
-                'option': 'cof-',
-                'weechat': 'cwf-',
-                'ext': 'cef-'
-            };
-            var typeToClassPrefixBg = {
-                'option': 'cob-',
-                'weechat': 'cwb-',
-                'ext': 'ceb-'
-            };
-            textElements.forEach(function(textEl) {
-                textEl.classes = [];
-
-                // foreground color
-                var prefix = typeToClassPrefixFg[textEl.fgColor.type];
-                textEl.classes.push(prefix + textEl.fgColor.name);
-
-                // background color
-                prefix = typeToClassPrefixBg[textEl.bgColor.type];
-                textEl.classes.push(prefix + textEl.bgColor.name);
-
-                // attributes
-                if (textEl.attrs.name !== null) {
-                    textEl.classes.push('coa-' + textEl.attrs.name);
-                }
-                for (var attr in textEl.attrs.override) {
-                    val = textEl.attrs.override[attr];
-                    if (val) {
-                        textEl.classes.push('a-' + attr);
-                    } else {
-                        textEl.classes.push('a-no-' + attr);
-                    }
-                }
-            });
-        }
-
 
         var prefix = $rootScope.parseRichText(message.prefix);
         var tags_array = message.tags_array;
