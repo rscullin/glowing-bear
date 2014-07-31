@@ -52,6 +52,7 @@ tr:hover {
 td.time {
     padding: 1px 5px 1px 1px;
     vertical-align: top;
+    display: inline;
 }
 
 .repeated-time {
@@ -76,11 +77,15 @@ td.prefix {
     padding-left: 4px;
 }
 td.message {
+    display: inline;
     word-wrap: break-word;
     word-break: break-word;
     vertical-align: top;
     width: 100%;
     padding: 1px 1px 1px 5px;
+}
+td.message div.plugin, td.message div.plugin div {
+    display: inline;
 }
 #readmarker {
     margin-top: 5px;
